@@ -1,0 +1,396 @@
+
+Saltar al contenido
+
+Comunidad DEV
+Crear una cuenta
+
+2
+
+3
+
+
+Łukasz Wójcik
+Łukasz Wójcik
+Publicado el28 de julio de 2023 • Editado el1 de marzo
+
+
+12
+Algoritmo Base128: Herramienta para codificar y decodificar datos de texto
+#
+programación
+#
+base128
+#
+ir
+#
+artículo
+  __________                          ____ ________    ______  
+  \______   \_____     ______  ____  /_   |\_____  \  /  __  \ 
+   |    |  _/\__  \   /  ___/_/ __ \  |   | /  ____/  >      < 
+   |    |   \ / __ \_ \___ \ \  ___/  |   |/       \ /   --   \
+   |______  /(____  //____  > \___  > |___|\_______ \\______  /
+          \/      \/      \/      \/               \/       \/
+Los algoritmos de codificación y decodificación son cruciales en el mundo digital actual.
+
+Una de las soluciones más interesantes y fiables es el algoritmo Base128
+
+. Este artículo le presentará los principios de funcionamiento de este algoritmo y la aplicación práctica del código fuente.
+
+Base128 es un programa escrito en Go que permite codificar y decodificar datos de texto mediante una implementación personalizada de la codificación Base128 . El algoritmo procesa los datos de entrada convirtiéndolos en una secuencia de números enteros (en el rango de 0 a 127) y luego reconstruyendo el texto original a partir de ellos.
+
+El programa se puede ejecutar con varios indicadores que determinan si los datos se deben codificar o decodificar, si se muestra ayuda o si está disponible información sobre la versión del programa.
+
+Si el usuario selecciona la -ebandera, el programa codifica la entrada en Base128 . Los datos de texto se leen del archivo de entrada o de la entrada estándar, eliminando los espacios en blanco y los saltos de línea. La entrada se convierte en una secuencia de enteros mediante la encodeBase128función.
+
+Finalmente, la secuencia de números se formatea como una sola cadena y se muestra en la salida estándar.
+
+Si el usuario selecciona la -dbandera, el programa decodifica la entrada, que se lee del archivo de entrada o de la entrada estándar. Al igual que con la codificación, se eliminan los espacios en blanco y los saltos de línea. La entrada se divide en números individuales, que se convierten en una secuencia de enteros mediante la decodeBase128función. Finalmente, la secuencia de números se convierte de nuevo a texto y se muestra en la salida estándar.
+
+El programa también admite las banderas -h, --version, y --copyright, que muestran la información correspondiente. Estas banderas no requieren entrada y no realizan codificación ni decodificación.
+
+En resumen, el programa Base128 permite codificar y decodificar datos de texto mediante una implementación personalizada de la codificación Base128 . Permite transformar datos de texto en una secuencia de enteros y viceversa. El programa es fácil de usar, con una interfaz de línea de comandos y diversas opciones que se pueden usar según las necesidades.
+
+A continuación, se describe paso a paso este algoritmo y el código fuente escrito en Go que implementa el algoritmo Base128 . Este código le permitirá codificar y decodificar datos de texto en este formato.
+
+package main: Define que este es el programa principal (no una biblioteca).
+Importaciones :
+flag:Para manejar indicadores de línea de comando (por ejemplo -e, , -d).
+fmt:Para formatear y mostrar texto.
+io:Para operaciones de entrada/salida (por ejemplo, leer desde stdin).
+os:Para interactuar con el sistema operativo (por ejemplo, leer archivos).
+strconv:Para convertir cadenas en números y viceversa.
+strings:Para manipular cadenas (por ejemplo, concatenación, división).
+package main
+
+import (
+    "flag"
+    "fmt"
+    "io/ioutil"
+    "os"
+    "strconv"
+    "strings"
+)
+2. Constantbase
+const base = 128
+base = 128:Define el rango de codificación (0-127) que corresponde a los caracteres ASCII estándar.
+3. FunciónencodeBase128
+func encodeBase128(input string) []int {
+result := make([]int, 0, len(input))
+for _, char := range input {
+result = append(result, int(char))
+}
+return result
+}
+Propósito : Convierte una cadena en una matriz de números enteros (rango 0-127).
+Paso a paso :
+Crea una matriz vacía resultcon capacidad igual a la longitud de la cadena de entrada.
+Itera sobre cada carácter de la inputcadena.
+Convierte un carácter en su valor numérico (ASCII) y lo agrega a la resultmatriz.
+Devuelve una matriz de números.
+4. FuncióndecodeBase128
+func decodeBase128(input []int) string {
+var builder strings.Builder
+for _, code := range input {
+_, err := builder.WriteRune(rune(code))
+if err != nil {
+fmt.Fprintln(os.Stderr, "base128: error writing to builder:", err)
+os.Exit(1)
+}
+}
+return builder.String()
+}
+Propósito : Convierte una matriz de enteros nuevamente en una cadena.
+Paso a paso :
+Crea un strings.Builderobjeto para construir eficientemente una cadena.
+Itera sobre cada número de la inputmatriz.
+Convierte el número en un carácter (runa) y lo agrega a builder.
+Si ocurre un error, el programa sale con un mensaje de error.
+Devuelve la cadena construida.
+5. La mainfunción
+La mainfunción es la función principal del programa, que maneja indicadores, lee datos de entrada y llama a las funciones apropiadas para codificar o decodificar.
+
+5.1. Definición de banderas
+encodeFlag := flag.Bool("e", false, "Converts the input's base128 encoding into an output text file.")
+decodeFlag := flag.Bool("d", false, "Recovers the original input file by decoding the information that was previously encoded using base128.")
+helpFlag := flag.Bool("h", false, "Print instructions for calling and a list of available alternatives.")
+versionFlag := flag.Bool("version", false, "Print the program's version.")
+copyrightFlag := flag.Bool("copyright", false, "Print copyright information.")
+flag.Parse()
+Banderas :
+-e: Codifica la entrada.
+-d:Decodifica la entrada.
+-h: Mostrar ayuda.
+--version:Muestra la versión del programa.
+--copyright:Muestra información de derechos de autor.
+flag.Parse():Analiza indicadores desde la línea de comandos.
+5.2. Manipulación -h, --version,--copyright
+if *helpFlag {
+// Display help
+os.Exit(0)
+}
+if *versionFlag {
+// Display version
+os.Exit(0)
+}
+if *copyrightFlag {
+// Display copyright information
+os.Exit(0)
+}
+Si se activa alguna de estas banderas, el programa muestra un mensaje apropiado y sale.
+5.3. Verificar conflictos de banderas
+if *encodeFlag && *decodeFlag {
+fmt.Fprintln(os.Stderr, "base128: cannot specify both -e and -d flags. Please use -e for ENCODE or -d for DECODE or -h for HELP")
+os.Exit(1)
+}
+Comprueba si el usuario intenta codificar y decodificar datos simultáneamente. De ser así, el programa finaliza con un error.
+5.4. Comprobación de que no hay acción
+if !*encodeFlag && !*decodeFlag {
+fmt.Fprintln(os.Stderr, "base128: no action specified. Please use -e for ENCODE or -d for DECODE or -h for HELP")
+os.Exit(1)
+}
+Comprueba si el usuario no ha seleccionado ninguna acción (codificar o decodificar). De lo contrario, el programa finaliza con un error.
+5.5. Lectura de datos de entrada
+args := flag.Args()
+var input string
+if len(args) == 0 || args[0] == "-" {
+bytes, err := io.ReadAll(os.Stdin)
+if err != nil {
+fmt.Fprintln(os.Stderr, "base128: error reading from stdin:", err)
+os.Exit(1)
+}
+input = string(bytes)
+} else {
+bytes, err := os.ReadFile(args[0])
+if err != nil {
+fmt.Fprintln(os.Stderr, "base128: error reading file:", err)
+os.Exit(1)
+}
+input = string(bytes)
+}
+Paso a paso :
+Comprueba si el usuario ha proporcionado un archivo como argumento.
+En caso contrario, lee los datos de la entrada estándar ( stdin).
+Si se proporciona un archivo, lee datos del archivo.
+Si ocurre un error, el programa sale con un mensaje de error.
+5.6. Tratamiento de datos
+if *encodeFlag {
+ numbers := encodeBase128(input)
+ output := strings.Trim(strings.Join(strings.Fields(fmt.Sprint(numbers)), " "), "[]")
+ fmt.Println(output)
+} else if *decodeFlag {
+ numbersStr := strings.Fields(input)
+ numbers := make([]int, len(numbersStr))
+ for i, numberStr := range numbersStr {
+ number, err := strconv.Atoi(numberStr)
+ if err != nil {
+ fmt.Fprintln(os.Stderr, "base128: error decoding number:", err)
+ os.Exit(1)
+ }
+ numbers[i] = number
+ }
+ output := decodeBase128(numbers)
+fmt.Println(output)
+}
+Si-e bandera:
+Codifica la entrada utilizando encodeBase128.
+Formatea la matriz de números resultante como una cadena (por ejemplo, [72 101 108]→ "72 101 108").
+Muestra el resultado.
+Si-d bandera:
+Divide la entrada en números individuales (por ejemplo, "72 101 108"→ ["72", "101", "108"]).
+Convierte cadenas en números enteros.
+Decodifica números usando decodeBase128.
+Muestra el resultado.
+Resumen
+El programa base128 :
+
+Admite indicadores para codificar, decodificar, mostrar ayuda, versión e información de derechos de autor.
+Lee datos de un archivo o entrada estándar.
+Codifica texto en una cadena de números (rango 0-127) o decodifica una cadena de números en texto.
+Está destinado principalmente a datos de texto, no a datos binarios.
+The Base128 encoding and decoding algorithm is applicable to text data processing. It offers effective tools for converting text data into a numeric representation, which can be useful in certain scenarios.
+
+For general use, the Base128 algorithm can be used in a variety of situations. Application examples are:
+
+Using the Base128 algorithm:
+
+1. Text data transformation:
+
+The Base128 algorithm can be used to transform text data into a sequence of integers, making it less human-readable. However, it is important to note that this is not a form of encryption and does not provide strong security.
+
+2. Communication over the network:
+
+Base128-encoded data can be transmitted over the network in a numeric format. However, since the algorithm is designed for text data, it is not suitable for encoding binary data.
+
+3. Data representation:
+
+The Base128 algorithm can be used to represent text data in a numeric form, which may be useful in certain data processing or storage scenarios.
+
+Limitations of the Base128 algorithm in this implementation:
+
+Text-only support:
+
+The program is designed to work with text data and does not support binary data. Attempting to encode or decode binary data may result in errors or incorrect output.
+
+No compression or security:
+
+The algorithm does not compress data or provide encryption. It simply converts text to a sequence of integers and vice versa.
+
+Limited character range:
+
+The algorithm works with characters in the range 0-127 (ASCII), which means it cannot handle extended character sets or binary data.
+
+Summary:
+
+The Base128 algorithm, as implemented in this program, is an effective tool for encoding and decoding text data. It offers a simple way to transform text into a numeric representation and vice versa. The Go source code presented in this article enables practical application and experimentation with this algorithm.
+
+While the algorithm is not suitable for binary data or secure encryption, it can be useful in scenarios where text data needs to be represented in a numeric format. Thanks to its simplicity of operation and flexibility, the Base128 algorithm is a tool worth exploring for text data processing.
+
+The entire base128 algorithm:
+
+Código fuente Base128
+
+The base128 site: HERE
+The GitHub repositories: THERE
+
+Thank you for reading.
+If you have any questions, or tips, you can leave them here in the comments. I will answer as soon as possible.
+
+perfil
+Sentry
+Promoted
+
+Imagen del blog de Sentry
+
+Build, Ship, See It All: MCP Monitoring with Sentry
+Built an MCP server? Now see everything it does. Sentry’s MCP Server Monitoring tracks every client, tool, and request so you can fix issues fast and build with confidence.
+
+Read more
+
+Top comments (2)
+Subscribe
+foto
+Añadir a la discusión
+ 
+ 
+Imagen de perfil de shrootbuck
+Zayd Krunz
+•
+29 jul 23
+
+The Base128 algorithm can be used to encode sensitive information such as passwords or credit card numbers. Converting data into numeric form makes it difficult for unauthorized users to read it.
+
+That is just completely untrue. No encoding is ever, ever secure. Other than that, great article.
+
+
+1
+Like
+
+ 
+ 
+Imagen de perfil de feranmiodugbemi
+feranmiodugbemi
+•
+28 jul 23
+
+Very nice and informative content here Łukasz Wójcik, but try to add syntax highlighting to your markdown code
+
+
+1
+Like
+
+Code of Conduct • Report abuse
+perfil
+Depot
+Promoted
+
+Cambia un comando. Consigue compilaciones de Docker 40 veces más rápidas.
+
+Change one command. Get 40x faster Docker builds.
+'docker build .' → 'depot build .'
+
+Native ARM + Intel CPUs. Persistent NVMe cache. Zero emulation. Multi-platform in parallel. Shared across local + CI.
+
+Learn More
+
+
+Łukasz Wójcik
+Follow
+Cybersecurity Specialist | Cryptography | Cloud DevOps Engineer
+Location
+Poland
+Education
+BSc. of Computer Science
+Work
+Senior Systems Specialist in the Financial Resort's IT Center
+Joined
+26 jul 2023
+More from Łukasz Wójcik
+HEX 2 DEC Converter
+#hex #converter #go #programming
+Making Life Easier for Programmers: A Simple Solution to Diacritical Marks in Text Files (66 languages)
+#go #programming #ogonki #diacritics
+Try the 8 Ball Simulator from Interstate 60 and Discover the Truth.
+#go #programming #ball8 #gamedev
+perfil
+MongoDB
+Promoted
+
+Cree aplicaciones de IA genéricas que se ejecuten en cualquier lugar con MongoDB Atlas
+
+Build gen AI apps that run anywhere with MongoDB Atlas
+MongoDB Atlas bundles vector search and a flexible document model so developers can build, scale, and run gen AI apps without juggling multiple databases. From LLM to semantic search, Atlas streamlines AI architecture. Start free today.
+
+Start Free
+
+func encodeBase128(input string) []int {
+result := make([]int, 0, len(input))
+for _, char := range input {
+result = append(result, int(char))
+}
+return result
+}
+💎 DEV Diamond Sponsors
+
+Thank you to our Diamond Sponsors for supporting the DEV Community
+
+Google AI: socio oficial de plataforma y modelo de IA
+Google AI is the official AI Model and Platform Partner of DEV
+
+Neon - Socio oficial de la base de datos
+Neon is the official database partner of DEV
+
+Algolia - Socio de búsqueda oficial
+Algolia is the official search partner of DEV
+
+DEV Community — A space to discuss and keep up software development and manage your software career
+
+Home
+DEV++
+Podcasts
+Videos
+DEV Education Tracks
+DEV Challenges
+DEV Help
+Advertise on DEV
+DEV Showcase
+About
+Contact
+Free Postgres Database
+Software comparisons
+Forem Shop
+Code of Conduct
+política de privacidad
+Condiciones de uso
+Construido sobreForem- elcódigo abiertosoftware que impulsaDESARROLLOy otras comunidades inclusivas.
+
+Hecho con amor yRuby on Rails. Comunidad DEV © 2016 - 2025.
+2package main
+
+import (
+    "flag"
+    "fmt"
+    "io/ioutil"
+    "os"
+    "strconv"
+    "strings"
+)const base = 128
